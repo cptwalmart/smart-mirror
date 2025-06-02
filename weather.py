@@ -1,6 +1,6 @@
 # weather.py
 import requests
-from config import API_KEY, CITY
+from config.config import API_KEY, CITY
 
 def get_weather():
     url = f'https://api.openweathermap.org/data/2.5/weather?q={CITY}&units=imperial&appid={API_KEY}'

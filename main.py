@@ -4,6 +4,8 @@ from weather import get_weather
 from PIL import Image, ImageTk
 import requests
 from io import BytesIO
+from calendar_events import get_today_events
+
 
 root = tk.Tk()
 root.title("Smart Mirror")
@@ -22,7 +24,7 @@ weather_frame.grid(row = 0, column =1, padx = 20, pady = 20, sticky= 'ne')
 
 # Time centered
 time_label = tk.Label(root, font=('Helvetica', 80), fg='white', bg='black')
-time_label.grid(row=1, column=0, columnspan=2, padx=20, pady=10, sticky='nsew')
+time_label.grid(row=0, column=0, columnspan=2, padx=20, pady=10, sticky='n')
 
 # Date top-right
 date_label = tk.Label(root, font=('Helvetica', 40), fg='white', bg='black')
@@ -36,12 +38,21 @@ weather_icon_label.pack(side='left', padx=(0, 10))
 weather_label = tk.Label(weather_frame, font=('Helvetica', 30), fg='white', bg='black')
 weather_label.pack(side='left')
 
+# Get events
+events = get_today_events()
+event_text = "Today's Events:\n" + "\n".join(f"- {e}" for e in events)
+
+events_label = tk.Label(root, text=event_text, font=('Helvetica', 24), fg='white', bg='black', justify='left', anchor='nw')
+events_label.grid(row=4, column=0, padx=20, pady=(10, 10), sticky='nw')
+
+#update time every second
 def update_time():
     time_label.config(text=get_time())
     date_label.config(text=get_date())
     
     root.after(1000, update_time)
 
+#update weather and icon every 10 min to limit API
 def update_weather():
     weather_text, icon_url = get_weather()
     weather_label.config(text=weather_text)
