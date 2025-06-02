@@ -13,14 +13,14 @@ from datetime import datetime, time
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 
 def get_today_events():
-    creds = None
-    #authenticate by either using saved token or get a new one via browser
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+    token_path = 'config/token.json'
+
+    if os.path.exists(token_path):
+        creds = Credentials.from_authorized_user_file(token_path, SCOPES)
     else:
         flow = InstalledAppFlow.from_client_secrets_file('config/credentials.json', SCOPES)
         creds = flow.run_local_server(port=0)
-        with open('token.json', 'w') as token:
+        with open(token_path, 'w') as token:
             token.write(creds.to_json())
 
     #connect to calendar api
@@ -64,8 +64,6 @@ def get_today_events():
             if 'T' in start else start
         )
         formatted.append(f"{start_time} – {event['summary']}")
-    for event in all_events:
-        print(event['summary'], event['start'])
     
     return formatted
 
